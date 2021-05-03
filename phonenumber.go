@@ -18,10 +18,6 @@ func ParseWithLandLine(number string, country string) string {
 func parseInternal(number string, country string, landLineInclude bool) string {
 	number = strings.Replace(number, " ", "", -1)
 	country = strings.Replace(country, " ", "", -1)
-	plusSign := false
-	if strings.HasPrefix(number, "+") {
-		plusSign = true
-	}
 
 	// remove any non-digit character, included the +
 	number = regexp.MustCompile(`\D`).ReplaceAllString(number, "")
@@ -37,13 +33,11 @@ func parseInternal(number string, country string, landLineInclude bool) string {
 		r := regexp.MustCompile(`^8+`)
 		number = r.ReplaceAllString(number, "")
 	}
-	if plusSign {
-		iso3166 = GetISO3166ByNumber(number, landLineInclude)
-	} else {
-		if indexOfInt(len(number), iso3166.PhoneNumberLengths) != -1 {
-			number = iso3166.CountryCode + number
-		}
+	
+	if indexOfInt(len(number), iso3166.PhoneNumberLengths) != -1 {
+		number = iso3166.CountryCode + number
 	}
+	
 	if validatePhoneISO3166(number, iso3166, landLineInclude) {
 		return number
 	}
